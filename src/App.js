@@ -63,7 +63,7 @@ export default function App() {
   return (
     <>
       <h1>Tic Tac Toe</h1>
-      {gameOver && <h1>GAME OVER !!!</h1>}
+      {gameOver && !winner && <h1>GAME OVER !!!</h1>}
       {winner && <h1>{`Player ${winner} WON`}</h1>}
       {(gameOver || winner) && (
         <div>
