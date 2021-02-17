@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
 
-const modes = {
-  EMPTY: "-",
-  X: "X",
-  O: "O"
-};
+const X = "X";
+const O = "O";
 
-function determineWinner(tiles) {
+function determineWinner(squares) {
   const winningCombinations = [
     [0, 1, 2],
     [3, 4, 5],
@@ -23,39 +20,39 @@ function determineWinner(tiles) {
   for (const combination of winningCombinations) {
     const [x, y, z] = combination;
     winner =
-      tiles[x] !== modes.EMPTY &&
-      tiles[x] === tiles[y] &&
-      tiles[x] === tiles[z];
-    if (winner) return tiles[x];
+      squares[x] !== null &&
+      squares[x] === squares[y] &&
+      squares[x] === squares[z];
+    if (winner) return squares[x];
   }
 
   return null;
 }
 
-const getEmptyTiles = () => new Array(9).fill(modes.EMPTY);
-const initialTurn = modes.X;
+const getEmptySquares = () => new Array(9).fill(null);
+const initialTurn = X;
 
 export default function App() {
-  const [tiles, setTiles] = useState(getEmptyTiles);
+  const [squares, setSquares] = useState(getEmptySquares);
   const [turn, setTurn] = useState(initialTurn);
   const [winner, setWinner] = useState(null);
 
-  const gameOver = tiles.findIndex((t) => t === modes.EMPTY) < 0;
+  const gameOver = squares.findIndex((t) => t === null) < 0;
 
   useEffect(() => {
-    const winner = determineWinner(tiles);
+    const winner = determineWinner(squares);
     if (winner) setWinner(winner);
-  }, [tiles]);
+  }, [squares]);
 
   function handleClick(index) {
-    const newThings = [...tiles];
+    const newThings = [...squares];
     newThings[index] = turn;
-    setTiles(newThings);
-    setTurn(turn === modes.X ? modes.O : modes.X);
+    setSquares(newThings);
+    setTurn(turn === X ? O : X);
   }
 
   function tryAgain() {
-    setTiles(getEmptyTiles());
+    setSquares(getEmptySquares());
     setTurn(initialTurn);
     setWinner(null);
   }
@@ -71,12 +68,12 @@ export default function App() {
         </div>
       )}
 
-      {tiles.map((t, index) => (
+      {squares.map((t, index) => (
         <span key={index}>
-          <Tile
+          <Square
             mode={t}
             onClick={() => handleClick(index)}
-            disabled={gameOver || winner || t !== modes.EMPTY}
+            disabled={gameOver || winner || t !== null}
           />
           {(index + 1) % 3 === 0 && <br />}
         </span>
@@ -85,7 +82,7 @@ export default function App() {
   );
 }
 
-function Tile({ mode, ...rest }) {
+function Square({ mode, ...rest }) {
   return (
     <button style={{ margin: "5px", width: "50px", height: "50px" }} {...rest}>
       {mode}
